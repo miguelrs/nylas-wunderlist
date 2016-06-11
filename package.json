@@ -1,0 +1,19 @@
+{
+  "name": "n1-wunderlist",
+  "main": "./lib/main",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/miguelrs/n1-wunderlist.git"
+  },
+  "engines": {
+    "nylas": ">=0.4.40"
+  },
+  "windowTypes": {
+    "default": true,
+    "composer": true
+  },
+  "description": "Simple plugin for Nylas N1 email client to interact with Wunderlist",
+  "dependencies": {},
+  "license": "MIT"
+}
