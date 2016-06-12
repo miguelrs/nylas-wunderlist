@@ -2,6 +2,9 @@ const {React} = require('nylas-exports');
 const {RetinaImg} = require('nylas-component-kit');
 const WunderlistStoreManager = require('../wunderlist-store-manager');
 
+/**
+ * Toolbar button to add an email as a Wunderlist ToDo.
+ */
 class AddToWunderlistToolbarButton extends React.Component {
 
     static displayName = 'AddToWunderlistToolbarButton';
@@ -12,7 +15,6 @@ class AddToWunderlistToolbarButton extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
     }
 
     componentWillMount() {
@@ -21,15 +23,10 @@ class AddToWunderlistToolbarButton extends React.Component {
 
     componentWillReceiveProps(newProps) {
         this.load(newProps);
-        this.setState(this.wunderlistStore.threadState);
     }
 
     componentWillUnmount() {
         return this.unload();
-    }
-
-    onMessageLoad(threadState) {
-        this.setState(threadState);
     }
 
     onClick(event) {
@@ -42,15 +39,9 @@ class AddToWunderlistToolbarButton extends React.Component {
     load(props) {
         this.unload();
         this.wunderlistStore = WunderlistStoreManager.getStoreForThread(props.thread);
-        this.unlisten = this.wunderlistStore.listen(this.onMessageLoad.bind(this));
-        this.wunderlistStore.triggerUpdate();
     }
 
     unload() {
-        if (this.unlisten) {
-            this.unlisten();
-        }
-        this.unlisten = null;
         this.wunderlistStore = null;
     }
 

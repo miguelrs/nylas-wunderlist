@@ -1,6 +1,4 @@
-const {
-    ComponentRegistry
-} = require('nylas-exports');
+const {ComponentRegistry} = require('nylas-exports');
 
 const {
     AddToWunderlistToolbarButton
