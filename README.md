@@ -22,6 +22,6 @@ Extremely simple plugin for Nylas N1 email client to interact with Wunderlist.
 
 This plugin basically forwards the open email to `me@wunderlist.com`, which will create a new task in your Wunderlist `Inbox` list.
 
-For this to work, you need a Wunderlist account for the email address that is the recipient of the email you are sending.
+This will only work when the email is being forwarded from an email address that is registered with Wunderlist.
 
-More information on the 'Mail to Wunderlist' functionality can be found [here](https://support.wunderlist.com/customer/portal/articles/59709).
+More information about the 'Mail to Wunderlist' functionality can be found [here](https://support.wunderlist.com/customer/portal/articles/59709).
