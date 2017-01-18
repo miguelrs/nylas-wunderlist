@@ -6,7 +6,6 @@ const NylasStore = require('nylas-store');
  */
 class WunderlistStore extends NylasStore {
     constructor(thread) {
-        console.log('~-~~-~~-~~-~~-~ STORE CONSTRUCTOR ~-~~-~~-~~-~~-~');
         super();
         this.thread = thread;
     }

@@ -2,7 +2,6 @@ const WunderlistStore = require('./wunderlist-store');
 
 class WunderlistStoreManager {
     constructor() {
-        console.log('~-~~-~~-~~-~~-~ STORE MANAGER CONSTRUCTOR ~-~~-~~-~~-~~-~');
         this.threads = {};
     }
 

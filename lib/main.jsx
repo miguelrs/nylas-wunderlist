@@ -6,12 +6,10 @@ const {
 
 module.exports = {
     activate: () => {
-        console.log('~-~~-~~-~~-~~-~ ACTIVATE ~-~~-~~-~~-~~-~');
         ComponentRegistry.register(AddToWunderlistToolbarButton, {role: 'ThreadActionsToolbarButton'});
     },
 
     deactivate: () => {
-        console.log('~-~~-~~-~~-~~-~ DEACTIVATE ~-~~-~~-~~-~~-~');
         ComponentRegistry.unregister(AddToWunderlistToolbarButton);
     }
 };

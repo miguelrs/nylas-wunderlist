@@ -30,7 +30,6 @@ class AddToWunderlistToolbarButton extends React.Component {
     }
 
     onClick(event) {
-        console.log('~-~~-~~-~~-~~-~ CLICK ~-~~-~~-~~-~~-~');
         this.wunderlistStore.addToWunderlist();
 
         // Don't trigger the thread row click
@@ -47,7 +46,6 @@ class AddToWunderlistToolbarButton extends React.Component {
     }
 
     render() {
-        console.log('~-~~-~~-~~-~~-~ RENDER BUTTON ~-~~-~~-~~-~~-~');
         return (
             <button
                 className={'btn btn-toolbar'}
