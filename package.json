@@ -7,7 +7,7 @@
     "url": "https://github.com/miguelrs/n1-wunderlist.git"
   },
   "engines": {
-    "nylas": ">=0.4.40"
+    "nylas": ">=1.5.0"
   },
   "dependencies": {},
   "windowTypes": {
