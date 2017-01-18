@@ -30,6 +30,7 @@ class AddToWunderlistToolbarButton extends React.Component {
     }
 
     onClick(event) {
+        console.log('~-~~-~~-~~-~~-~ CLICK ~-~~-~~-~~-~~-~');
         this.wunderlistStore.addToWunderlist();
 
         // Don't trigger the thread row click
@@ -46,6 +47,7 @@ class AddToWunderlistToolbarButton extends React.Component {
     }
 
     render() {
+        console.log('~-~~-~~-~~-~~-~ RENDER BUTTON ~-~~-~~-~~-~~-~');
         return (
             <button
                 className={'btn btn-toolbar'}
@@ -54,7 +56,7 @@ class AddToWunderlistToolbarButton extends React.Component {
             >
                 <RetinaImg
                     mode={RetinaImg.Mode.ContentIsMask}
-                    url='nylas://n1-wunderlist/assets/n1-wunderlist-toolbar@2x.png'
+                    url='nylas://nylas-wunderlist/assets/nylas-wunderlist-toolbar@2x.png'
                 />
             </button>
         );
