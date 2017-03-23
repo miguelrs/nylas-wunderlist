@@ -7,10 +7,13 @@
     "url": "https://github.com/miguelrs/nylas-wunderlist.git"
   },
   "engines": {
-    "nylas": ">=1.5.0"
+    "nylas": ">=1.0.8"
   },
   "dependencies": {
-    "babel-plugin-transform-async-generator-functions": "^6.17.0"
+    "babel-plugin-transform-async-generator-functions": "^6.22.0",
+    "immutable": "^3.8.1",
+    "request": "^2.79.0",
+    "wunderlist": "^0.1.3"
   },
   "windowTypes": {
     "default": true,
