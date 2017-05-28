@@ -13,6 +13,8 @@ class WunderlistStore extends NylasStore {
         this.folders = new Immutable.Map();
         this.listPositions = new Immutable.OrderedSet();
         this.lists = new Immutable.Map();
+        this.loading = false;
+        this.toDos = new Immutable.OrderedSet();
 
         this.fetchFolders();
         this.fetchListPositions();
@@ -32,7 +34,7 @@ class WunderlistStore extends NylasStore {
     }
 
     fetchFolders() {
-        return this.makeRequest('https://a.wunderlist.com/api/v1/folders', (err, resp, data) => {
+        return this.makeGetRequest('https://a.wunderlist.com/api/v1/folders', (err, resp, data) => {
             console.log('Fetched FOLDERS:');
             console.log(data);
             if (Array.isArray(data)) {
@@ -45,7 +47,7 @@ class WunderlistStore extends NylasStore {
     }
 
     fetchListPositions() {
-        return this.makeRequest('https://a.wunderlist.com/api/v1/list_positions', (err, resp, data) => {
+        return this.makeGetRequest('https://a.wunderlist.com/api/v1/list_positions', (err, resp, data) => {
             console.log('Fetched LIST POSITIONS:');
             console.log(data);
             if (Array.isArray(data)) {
@@ -58,7 +60,7 @@ class WunderlistStore extends NylasStore {
     }
 
     fetchLists() {
-        return this.makeRequest('https://a.wunderlist.com/api/v1/lists', (err, resp, data) => {
+        return this.makeGetRequest('https://a.wunderlist.com/api/v1/lists', (err, resp, data) => {
             console.log('Fetched LISTS:');
             console.log(data);
             if (Array.isArray(data)) {
@@ -68,6 +70,28 @@ class WunderlistStore extends NylasStore {
                 console.error('WUNDERLIST ERROR: unexpected fetched LISTS');
             }
         });
+    }
+
+    postToDo(toDo) {
+        this.loading = true;
+        this.trigger();
+
+        return this.makePostRequest('https://a.wunderlist.com/api/v1/tasks', (err, resp, data) => {
+            console.log('Posted TODO:');
+            console.log(data);
+
+            this.loading = false;
+            this.toDos = this.toDos.add(data);
+            this.trigger();
+        }, toDo);
+    }
+
+    isLoading() {
+        return this.loading;
+    }
+
+    getCreatedToDo() {
+        return this.createdToDo;
     }
 
     getFolderByList(list) {
@@ -121,16 +145,34 @@ class WunderlistStore extends NylasStore {
         return menuItems;
     };
 
-    makeRequest = (url, callback) => {
+    makeGetRequest = (uri, callback) => {
         return request({
-            url,
+            uri: uri,
+            method: 'GET',
             headers: {
-                'X-Client-ID': 'Client ID from Wunderlist API',
-                'X-Access-Token': 'Access token generated in Wunderlist API',
+                'X-Client-ID': '333010247bc2f5e520da',
+                'X-Access-Token': 'fe5678ea4b15fe262f2aabe43462f143429439355281170a8fbfccf2dc9b',
             },
             json: true
         }, callback);
     };
+
+    makePostRequest = (uri, callback, data) => {
+        return request({
+            uri: uri,
+            method: 'POST',
+            headers: {
+                'X-Client-ID': '333010247bc2f5e520da',
+                'X-Access-Token': 'fe5678ea4b15fe262f2aabe43462f143429439355281170a8fbfccf2dc9b',
+            },
+            json: true,
+            body: data,
+        }, callback);
+    };
+
+    getToDos() {
+        return this.toDos;
+    }
 }
 
 export default new WunderlistStore();

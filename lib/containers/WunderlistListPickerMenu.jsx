@@ -37,6 +37,7 @@ export default class WunderlistListPickerMenu extends React.Component {
         return {
             folders: WunderlistStore.getFolders(),
             lists: WunderlistStore.getLists(),
+            createdToDo: WunderlistStore.getCreatedToDo(),
         };
     };
 
@@ -69,9 +70,16 @@ export default class WunderlistListPickerMenu extends React.Component {
             title: this.props.thread.subject,
         };
 
-        // TODO: THIS IS NOT WORKING!!!
-        const task = new CreateToDoTask(toDo);
-        Actions.queueTask(task);
+        console.log('List selected: ' + item.title);
+        console.log(toDo);
+
+        WunderlistStore.postToDo(toDo);
+
+        Actions.closePopover();
+
+        // // // TODO: THIS IS NOT WORKING!!!
+        // const task = new CreateToDoTask(toDo);
+        // Actions.queueTask(task);
 
         // const buttonRectangle = ReactDOM.findDOMNode(this.refs.wunderlist_button).getBoundingClientRect();
         //

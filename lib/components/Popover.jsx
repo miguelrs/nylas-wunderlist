@@ -3,8 +3,12 @@ import {React} from 'nylas-exports';
 const styles = {
     popover: {
         background: '#f6f6f6',
-        width: 250,
         maxHeight: 400,
+        minHeight: 100,
+        overflow: 'overlay',
+        padding: 10,
+        position: 'relative',
+        width: 250,
     },
 };
 

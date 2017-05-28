@@ -1,12 +1,14 @@
-import {React} from 'nylas-exports';
-import Icon from '../components/Icon';
-import Popover from '../components/Popover';
-import WunderlistListPickerMenu from './WunderlistListPickerMenu';
+import {Actions, React} from "nylas-exports";
+import Popover from "../components/Popover";
+import {FixedPopover, Spinner} from "nylas-component-kit";
+import WunderlistListPickerMenu from "./WunderlistListPickerMenu";
+import WunderlistStore from "../stores/WunderlistStore";
+import PopoverMessage from "../components/PopoverMessage";
 
 /**
  *
  */
-export default class WunderlistPopover extends React.Component {
+export default class WunderlistPopover extends FixedPopover {
 
     static displayName = 'WunderlistPopover';
 
@@ -19,11 +21,39 @@ export default class WunderlistPopover extends React.Component {
         }),
     };
 
+    constructor(props) {
+        super(props);
+        this.state = this.getStateFromStores();
+    }
+
+    componentDidMount() {
+        this.unsubscribe = WunderlistStore.listen(this.onChange);
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
+
+    onChange = () => {
+        this.setState(this.getStateFromStores());
+    };
+
+    getStateFromStores = () => {
+        return {
+            loading: WunderlistStore.isLoading(),
+            toDo: WunderlistStore.getCreatedToDo(),
+        };
+    };
+
     renderConfirmation() {
         return (
             <Popover style={styles.popover}>
-                <p><Icon icon="assignment-turned-in" size={32}/></p>
-                <p>ToDo created successfully!</p>
+                <PopoverMessage
+                    icon="assignment-turned-in"
+                    onClose={() => Actions.closePopover()}
+                    text="ToDo created successfully!"
+                    type="success"
+                />
             </Popover>
         );
     }
@@ -36,10 +66,20 @@ export default class WunderlistPopover extends React.Component {
         );
     }
 
-    render() {
-        const {toDo} = this.props;
+    renderSpinner() {
+        return (
+            <Popover>
+                <Spinner visible={true} withCover={true}/>
+            </Popover>
+        );
+    }
 
-        if (toDo) {
+    render() {
+        const {loading, toDo} = this.state;
+
+        if (loading) {
+            return this.renderSpinner();
+        } else if (toDo) {
             return this.renderConfirmation();
         } else {
             return this.renderListPickerMenu();

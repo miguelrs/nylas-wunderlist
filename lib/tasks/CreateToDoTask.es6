@@ -1,6 +1,6 @@
-import {Task, TaskRegistry, DatabaseStore} from 'nylas-exports'
+import {Task, TaskRegistry} from 'nylas-exports'
 
-export default class CreateTodoTask extends Task {
+class CreateTodoTask extends Task {
     constructor(toDo) {
         super();
         this.toDo = toDo;
@@ -14,3 +14,5 @@ export default class CreateTodoTask extends Task {
         console.log('TASK: CreateTodoTask::performRemote()');
     };
 }
+
+export default CreateTodoTask;
