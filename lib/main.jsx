@@ -1,15 +1,12 @@
-const {ComponentRegistry} = require('nylas-exports');
-
-const {
-    AddToWunderlistToolbarButton
-} = require('./ui/wunderlist-buttons');
+import {ComponentRegistry, TaskRegistry} from 'nylas-exports';
+import WunderlistToolbarButton from './containers/WunderlistToolbarButton';
 
 module.exports = {
     activate: () => {
-        ComponentRegistry.register(AddToWunderlistToolbarButton, {role: 'ThreadActionsToolbarButton'});
+        ComponentRegistry.register(WunderlistToolbarButton, {role: 'ThreadActionsToolbarButton'});
     },
 
     deactivate: () => {
-        ComponentRegistry.unregister(AddToWunderlistToolbarButton);
+        ComponentRegistry.unregister(WunderlistToolbarButton);
     }
 };

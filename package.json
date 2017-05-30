@@ -1,21 +1,26 @@
 {
-  "name": "n1-wunderlist",
+  "name": "nylas-wunderlist",
   "main": "./lib/main",
   "version": "0.1.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/miguelrs/n1-wunderlist.git"
+    "url": "https://github.com/miguelrs/nylas-wunderlist.git"
   },
   "engines": {
-    "nylas": ">=0.4.40"
+    "nylas": ">=1.0.8"
   },
-  "dependencies": {},
+  "dependencies": {
+    "babel-plugin-transform-async-generator-functions": "^6.22.0",
+    "immutable": "^3.8.1",
+    "request": "^2.79.0",
+    "wunderlist": "^0.1.3"
+  },
   "windowTypes": {
     "default": true,
     "composer": true
   },
-  "title": "N1 Wunderlist",
+  "title": "Nylas Wunderlist Integration",
   "icon": "icon-wunderlist.png",
-  "description": "Simple plugin for Nylas N1 email client to interact with Wunderlist",
+  "description": "Plugin for Nylas Mail client app to interact with Wunderlist task management app",
   "license": "MIT"
 }
