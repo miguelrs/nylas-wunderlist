@@ -1,178 +1,137 @@
+/**
+ * Store for the actions related with Wunderlist API.
+ */
 import {NylasAPI, Actions} from 'nylas-exports';
 import NylasStore from 'nylas-store';
 import request from 'request';
 import Immutable from 'immutable';
+import Account from "../model/Account";
+import Folder from "../model/Folder";
+import List from "../model/List";
 
-/**
- * Store for the actions related with Wunderlist API.
- */
 class WunderlistStore extends NylasStore {
     constructor() {
         super();
 
-        this.folders = new Immutable.Map();
-        this.listPositions = new Immutable.OrderedSet();
-        this.lists = new Immutable.Map();
-        this.loading = false;
-        this.toDos = new Immutable.OrderedSet();
+        this.account = new Account();
 
         this.fetchFolders();
         this.fetchListPositions();
         this.fetchLists();
-
-        // This is to test new lists get appended:
-        // setTimeout(() => {
-        //     this.lists = this.lists.set(154090000, Immutable.Map(Immutable.fromJS({
-        //         id: 154090000,
-        //         list_type: "list",
-        //         title: "Async Fetched List",
-        //         type: "list",
-        //     })));
-        //     this.listPositions = this.listPositions.add(154090000);
-        //     this.trigger();
-        // }, 10000);
     }
 
     fetchFolders() {
-        return this.makeGetRequest('https://a.wunderlist.com/api/v1/folders', (err, resp, data) => {
-            console.log('Fetched FOLDERS:');
-            console.log(data);
-            if (Array.isArray(data)) {
-                this.folders = Immutable.Map(data.map((folder, index) => ([folder.id, Immutable.fromJS(folder)])));
-                this.trigger();
-            } else {
-                console.error('WUNDERLIST ERROR: unexpected fetched FOLDERS');
+        const uri = this.getUri('folders');
+
+        return this.makeRequest(uri, (error, response, data) => {
+            if (error !== null || !Array.isArray(data)) {
+                this.logRequestError(uri, error, response, data);
+                return;
             }
+
+            this.logRequestFinished(uri, response, data);
+            this.account = this.account.addFolders(
+                Immutable.Map(data.map(folderData => [folderData.id, new Folder(folderData)]))
+            );
+            this.trigger();
         });
     }
 
     fetchListPositions() {
-        return this.makeGetRequest('https://a.wunderlist.com/api/v1/list_positions', (err, resp, data) => {
-            console.log('Fetched LIST POSITIONS:');
-            console.log(data);
-            if (Array.isArray(data)) {
-                this.listPositions = Immutable.OrderedSet(data[0].values);
-                this.trigger();
-            } else {
-                console.error('WUNDERLIST ERROR: unexpected fetched LIST POSITIONS');
+        const uri = this.getUri('list_positions');
+
+        return this.makeRequest(uri, (error, response, data) => {
+            if (error !== null || !Array.isArray(data)) {
+                this.logRequestError(uri, error, response, data);
+                return;
             }
+
+            this.logRequestFinished(uri, response, data);
+            this.account = this.account.setListPositions(
+                Immutable.OrderedSet(data[0].values)
+            );
+            this.trigger();
         });
     }
 
     fetchLists() {
-        return this.makeGetRequest('https://a.wunderlist.com/api/v1/lists', (err, resp, data) => {
-            console.log('Fetched LISTS:');
-            console.log(data);
-            if (Array.isArray(data)) {
-                this.lists = Immutable.Map(data.map((list, index) => ([list.id, Immutable.fromJS(list)])));
-                this.trigger();
-            } else {
-                console.error('WUNDERLIST ERROR: unexpected fetched LISTS');
+        const uri = this.getUri('lists');
+
+        return this.makeRequest(uri, (error, response, data) => {
+            if (error !== null || !Array.isArray(data)) {
+                this.logRequestError(uri, error, response, data);
+                return;
             }
+
+            this.logRequestFinished(uri, response, data);
+            this.account = this.account.addLists(
+                Immutable.Map(data.map(listData => [listData.id, new List(listData)]))
+            );
+            this.trigger();
         });
     }
 
     postToDo(toDo) {
-        this.loading = true;
-        this.trigger();
+        const uri = this.getUri('tasks');
+        const postData = toDo.toJS();
 
-        return this.makePostRequest('https://a.wunderlist.com/api/v1/tasks', (err, resp, data) => {
-            console.log('Posted TODO:');
-            console.log(data);
+        return this.makeRequest(uri, (error, response, data) => {
+            if (error !== null) {
+                this.logRequestError(uri, error, response, data);
+                return;
+            }
 
-            this.loading = false;
-            this.toDos = this.toDos.add(data);
+            this.logRequestFinished(uri, response, data);
             this.trigger();
-        }, toDo);
+        }, postData);
     }
 
-    isLoading() {
-        return this.loading;
+    getAccount() {
+        return this.account;
     }
 
-    getCreatedToDo() {
-        return this.createdToDo;
-    }
-
-    getFolderByList(list) {
-        return this.folders.find((folder) => {
-            let listId = list.get('id');
-            return folder.get('list_ids').contains(listId);
-        });
-    }
-
-    getFolders() {
-        return this.folders;
-    }
-
-    getListByType(listType) {
-        return this.lists.find((list) => {
-            return list.get('list_type') === listType;
-        });
-    }
-
-    getListPositions() {
-        return this.listPositions;
-    }
-
-    getLists() {
-        return this.lists;
-    }
-
-    getListsSorted() {
-        return this.listPositions.map((listId) => {
-            return this.lists.get(listId);
-        });
-    }
-
-    getAllFoldersAndListsSorted() {
-        let menuItems = Immutable.OrderedSet();
-        let lastUsedFolder = null;
-
-        let inboxList = this.getListByType('inbox');
-        menuItems = menuItems.add(inboxList.set('menu_item_type', 'inbox'));
-
-        for (let list of this.getListsSorted()) {
-            let currentFolder = this.getFolderByList(list);
-            if (currentFolder !== undefined && (lastUsedFolder === null || lastUsedFolder.get('id') !== currentFolder.get('id'))) {
-                menuItems = menuItems.add(currentFolder.set('menu_item_type', 'folder'));
-            }
-            if (list.get('list_type') !== 'inbox') {
-                menuItems = menuItems.add(list.set('menu_item_type', 'list'));
-            }
-        }
-
-        return menuItems;
-    };
-
-    makeGetRequest = (uri, callback) => {
+    makeRequest = (uri, callback, body = null) => {
+        this.logRequestStarted(uri, body);
         return request({
             uri: uri,
-            method: 'GET',
+            method: body === null ? 'GET' : 'POST',
             headers: {
-                'X-Client-ID': '333010247bc2f5e520da',
-                'X-Access-Token': 'fe5678ea4b15fe262f2aabe43462f143429439355281170a8fbfccf2dc9b',
-            },
-            json: true
-        }, callback);
-    };
-
-    makePostRequest = (uri, callback, data) => {
-        return request({
-            uri: uri,
-            method: 'POST',
-            headers: {
-                'X-Client-ID': '333010247bc2f5e520da',
-                'X-Access-Token': 'fe5678ea4b15fe262f2aabe43462f143429439355281170a8fbfccf2dc9b',
+                'X-Client-ID': '',
+                'X-Access-Token': '',
             },
             json: true,
-            body: data,
+            body: body,
         }, callback);
     };
 
-    getToDos() {
-        return this.toDos;
-    }
+    logRequestStarted = (uri, body) => {
+        console.log(this.getLogHeader());
+        console.log('Request started: ' + uri);
+        console.log(body);
+        console.log(this.getLogFooter());
+    };
+
+    logRequestFinished = (uri, response, body) => {
+        console.log(this.getLogHeader());
+        console.log('Request finished to: ' + uri);
+        console.log(response);
+        console.log(body);
+        console.log(this.getLogFooter());
+    };
+
+    logRequestError = (uri, error, response, body) => {
+        console.error(this.getLogHeader());
+        console.error('Request failed to: ' + uri);
+        console.error(error);
+        console.error(response);
+        console.error(body);
+        console.error(this.getLogFooter());
+    };
+
+    getLogHeader = () => '~-~ Wunderlist log (' + (new Date()).toString() + ') -~-~-~-~-~-~-~-~-~-~';
+    getLogFooter = () => '~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~';
+
+    getUri = (endpoint) => 'https://a.wunderlist.com/api/v1/' + endpoint;
 }
 
 export default new WunderlistStore();

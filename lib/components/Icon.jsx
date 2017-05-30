@@ -1,5 +1,4 @@
 import {React} from 'nylas-exports';
-import StylingMixin from '../mixins/StylingMixin.jsx';
 
 /**
  * COPIED FROM: https://github.com/dmfrancisco/react-icons
@@ -7,7 +6,6 @@ import StylingMixin from '../mixins/StylingMixin.jsx';
  * Subset of the SVG icon collection from the Polymer project (goo.gl/N7SB5G)
  */
 export default React.createClass({
-    mixins: [StylingMixin], // TODO: not sure this is needed!
     propTypes: {
         icon: React.PropTypes.string.isRequired,
         size: React.PropTypes.oneOfType([
@@ -54,11 +52,11 @@ export default React.createClass({
             height: this.props.size
         };
         return (
-            <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" fit
-                 style={this.mergeStyles(
-                     styles,
-                     this.props.style
-                 )}>
+            <svg viewBox="0 0 24 24"
+                 preserveAspectRatio="xMidYMid meet"
+                 fit
+                 style={Object.assign({}, styles, this.props.style)}
+            >
                 {this.renderGraphic()}
             </svg>
         );

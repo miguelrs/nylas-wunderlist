@@ -1,9 +1,6 @@
 import {React, ReactDOM, Actions} from 'nylas-exports';
 import {RetinaImg, Menu, MenuItem, Toast} from 'nylas-component-kit';
-import WunderlistListPickerMenu from './WunderlistListPickerMenu';
 import WunderlistPopover from './WunderlistPopover';
-import Popover from '../components/Popover';
-import WunderlistStore from '../stores/WunderlistStore';
 
 /**
  * Toolbar button to add an email as a Wunderlist Task.
@@ -17,31 +14,7 @@ export default class WunderlistToolbarButton extends React.Component {
         thread: React.PropTypes.object.isRequired,
     };
 
-    constructor(props) {
-        super(props);
-        this.state = this.getStateFromStores();
-    }
-
-    componentDidMount() {
-        this.unsubscribe = WunderlistStore.listen(this.onChange);
-    }
-
-    componentWillUnmount() {
-        this.unsubscribe();
-    }
-
-    onChange = () => {
-        this.setState(this.getStateFromStores());
-    };
-
-    getStateFromStores = () => {
-        return {
-            loading: WunderlistStore.isLoading(),
-            toDos: WunderlistStore.getToDos(),
-        };
-    };
-
-    onClick(event) {
+    onClick() {
         const buttonRectangle = ReactDOM.findDOMNode(this.refs.wunderlist_button).getBoundingClientRect();
 
         Actions.openPopover(
@@ -51,9 +24,6 @@ export default class WunderlistToolbarButton extends React.Component {
                 direction: 'down',
             }
         );
-
-        // Don't trigger the thread row click - TODO: review - is this needed?
-        event.stopPropagation()
     }
 
     render() {

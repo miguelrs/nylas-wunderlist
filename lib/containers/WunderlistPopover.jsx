@@ -1,24 +1,16 @@
 import {Actions, React} from "nylas-exports";
-import Popover from "../components/Popover";
-import {FixedPopover, Spinner} from "nylas-component-kit";
-import WunderlistListPickerMenu from "./WunderlistListPickerMenu";
+import {FixedPopover, Menu, Spinner} from "nylas-component-kit";
 import WunderlistStore from "../stores/WunderlistStore";
-import PopoverMessage from "../components/PopoverMessage";
+import Icon from "../components/Icon";
+import List from "../model/List";
+import ToDo from "../model/ToDo";
 
-/**
- *
- */
 export default class WunderlistPopover extends FixedPopover {
 
     static displayName = 'WunderlistPopover';
 
     static propTypes = {
         thread: React.PropTypes.object.isRequired,
-        toDo: React.PropTypes.shape({
-            list_id: React.PropTypes.number.isRequired,
-            list_title: React.PropTypes.string.isRequired,
-            title: React.PropTypes.string.isRequired,
-        }),
     };
 
     constructor(props) {
@@ -40,55 +32,85 @@ export default class WunderlistPopover extends FixedPopover {
 
     getStateFromStores = () => {
         return {
-            loading: WunderlistStore.isLoading(),
-            toDo: WunderlistStore.getCreatedToDo(),
+            account: WunderlistStore.getAccount(),
         };
     };
 
-    renderConfirmation() {
-        return (
-            <Popover style={styles.popover}>
-                <PopoverMessage
-                    icon="assignment-turned-in"
-                    onClose={() => Actions.closePopover()}
-                    text="ToDo created successfully!"
-                    type="success"
-                />
-            </Popover>
+    onSelectList(list) {
+        const {thread} = this.props;
+
+        if (!list instanceof List) {
+            return;
+        }
+
+        WunderlistStore.postToDo(
+            new ToDo({
+                list_id: list.getId(),
+                title: thread.subject,
+            })
         );
+
+        Actions.closePopover();
     }
 
-    renderListPickerMenu() {
-        return (
-            <Popover>
-                <WunderlistListPickerMenu thread={this.props.thread}/>
-            </Popover>
-        );
-    }
+    onEscape = () => {
+        Actions.closePopover();
+    };
 
-    renderSpinner() {
+    buildListPickerMenuItems() {
+        const {account} = this.state;
+
+        return account.getListsSorted().toArray();
+    };
+
+    renderMenuItem = (item) => {
+        const iconLeft = item.isInbox() ? 'inbox' : 'list';
+
         return (
-            <Popover>
-                <Spinner visible={true} withCover={true}/>
-            </Popover>
+            <div key={item.getId()}>
+                <span style={styles.iconLeft}><Icon icon={iconLeft}/></span>
+                {item.getTitle()}
+                <span style={styles.iconRight}><Icon icon='chevron-right'/></span>
+            </div>
         );
-    }
+    };
 
     render() {
-        const {loading, toDo} = this.state;
+        const headerComponents = [
+            <p style={styles.menuHeader}>Select a list:</p>,
+        ];
 
-        if (loading) {
-            return this.renderSpinner();
-        } else if (toDo) {
-            return this.renderConfirmation();
-        } else {
-            return this.renderListPickerMenu();
-        }
+        return (
+            <div style={styles.popover}>
+                <Menu
+                    headerComponents={headerComponents}
+                    footerComponents={[]}
+                    itemContent={this.renderMenuItem.bind(this)}
+                    itemKey={item => item.get('id').toString()}
+                    items={this.buildListPickerMenuItems()}
+                    onSelect={this.onSelectList.bind(this)}
+                    onEscape={this.onEscape}
+                />
+            </div>
+        );
     }
 }
 
 const styles = {
+    iconLeft: {
+        marginRight: 10,
+    },
+    iconRight: {
+        float: 'right',
+    },
+    menuHeader: {
+        margin: 0,
+    },
     popover: {
-        textAlign: 'center',
+        background: '#f6f6f6',
+        maxHeight: 400,
+        minHeight: 100,
+        overflow: 'auto',
+        width: 250,
     },
 };
