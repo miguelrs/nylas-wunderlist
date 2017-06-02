@@ -1,24 +1,49 @@
-import Immutable from "immutable";
+import Immutable from 'immutable'
 
 const ListRecord = Immutable.Record({
     id: null,
     list_type: 'list',
     title: 'List',
-});
+})
 
-class List extends ListRecord {
-
-    getId() {
-        return this.get('id');
+/**
+ * A List represents a List in Wunderlist.
+ *
+ * It is just a group of ToDos, with a title and a particular position.
+ *
+ * @author Miguel Rosales Sueiro
+ */
+class List extends ListRecord
+{
+    /**
+     * Returns the unique ID of the List.
+     *
+     * @returns {Number}
+     */
+    getId()
+    {
+        return this.get('id')
     }
 
-    getTitle() {
-        return this.get('title');
+    /**
+     * Returns the user-defined title for the List.
+     *
+     * @returns {String}
+     */
+    getTitle()
+    {
+        return this.get('title')
     }
 
-    isInbox() {
-        return this.get('list_type') === 'inbox';
+    /**
+     * Whether this List is the Inbox List.
+     *
+     * @returns {boolean}
+     */
+    isInbox()
+    {
+        return this.get('list_type') === 'inbox'
     }
 }
 
-export default List;
+export default List
