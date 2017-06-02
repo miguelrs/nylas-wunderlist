@@ -11,6 +11,7 @@
     "nylas": ">=2.0.0"
   },
   "dependencies": {
+    "electron-oauth2": "^2.4.1",
     "immutable": "^3.8.1",
     "request": "^2.79.0"
   },
