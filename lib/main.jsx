@@ -1,12 +1,12 @@
-import {ComponentRegistry, TaskRegistry} from 'nylas-exports';
-import WunderlistToolbarButton from './containers/WunderlistToolbarButton';
+import { ComponentRegistry } from 'nylas-exports'
+import WunderlistToolbarButton from './containers/WunderlistToolbarButton'
 
 module.exports = {
     activate: () => {
-        ComponentRegistry.register(WunderlistToolbarButton, {role: 'ThreadActionsToolbarButton'});
+        ComponentRegistry.register(WunderlistToolbarButton, {role: 'ThreadActionsToolbarButton'})
     },
 
     deactivate: () => {
-        ComponentRegistry.unregister(WunderlistToolbarButton);
-    }
-};
+        ComponentRegistry.unregister(WunderlistToolbarButton)
+    },
+}

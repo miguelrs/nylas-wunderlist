@@ -10,34 +10,29 @@ import WunderlistStore from '../stores/WunderlistStore'
  *
  * @author Miguel Rosales Sueiro
  */
-export default class WunderlistPopover extends FixedPopover
-{
+export default class WunderlistPopover extends FixedPopover {
     static displayName = 'WunderlistPopover'
 
     static propTypes = {
         thread: React.PropTypes.object.isRequired,
     }
 
-    constructor(props)
-    {
+    constructor(props) {
         super(props)
         this.state = WunderlistPopover.getStateFromStores()
     }
 
-    static getStateFromStores()
-    {
+    static getStateFromStores() {
         return {
             account: WunderlistStore.getAccount(),
         }
     }
 
-    static onEscape()
-    {
+    static onEscape() {
         Actions.closePopover()
     }
 
-    static renderMenuItem(item)
-    {
+    static renderMenuItem(item) {
         const iconLeft = item.isInbox() ? 'inbox' : 'list'
 
         return (
@@ -49,30 +44,25 @@ export default class WunderlistPopover extends FixedPopover
         )
     }
 
-    buildListPickerMenuItems()
-    {
+    buildListPickerMenuItems() {
         const {account} = this.state
 
         return account.getListsSorted().toArray()
     };
 
-    componentDidMount()
-    {
+    componentDidMount() {
         this.unsubscribe = WunderlistStore.listen(this.onChange)
     }
 
-    componentWillUnmount()
-    {
+    componentWillUnmount() {
         this.unsubscribe()
     }
 
-    onChange()
-    {
+    onChange() {
         this.setState(WunderlistPopover.getStateFromStores())
     }
 
-    onSelectList(list)
-    {
+    onSelectList(list) {
         const {thread} = this.props
 
         if (!list instanceof List) {
@@ -89,8 +79,7 @@ export default class WunderlistPopover extends FixedPopover
         Actions.closePopover()
     }
 
-    render()
-    {
+    render() {
         const headerComponents = [
             <p style={styles.menuHeader}>Select a list:</p>,
         ]
