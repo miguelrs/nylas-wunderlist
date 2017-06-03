@@ -20,8 +20,7 @@ class List extends ListRecord
      *
      * @returns {Number}
      */
-    getId()
-    {
+    getId() {
         return this.get('id')
     }
 
@@ -30,8 +29,7 @@ class List extends ListRecord
      *
      * @returns {String}
      */
-    getTitle()
-    {
+    getTitle() {
         return this.get('title')
     }
 

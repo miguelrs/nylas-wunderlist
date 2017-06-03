@@ -13,16 +13,14 @@ const AccountRecord = Record({
  *
  * @author Miguel Rosales Sueiro
  */
-class Account extends AccountRecord
-{
+class Account extends AccountRecord {
     /**
      * Merges the given Folders with the existing Folders in the Account.
      *
      * @param {Map<string, Folder>} newFolders
      * @returns {Account}
      */
-    addFolders(newFolders)
-    {
+    addFolders(newFolders) {
         return this.update('folders', folders => folders.mergeDeep(newFolders))
     }
 
@@ -32,8 +30,7 @@ class Account extends AccountRecord
      * @param {Map<string, List>} newLists
      * @returns {Account}
      */
-    addLists(newLists)
-    {
+    addLists(newLists) {
         return this.update('lists', lists => lists.mergeDeep(newLists))
     }
 
@@ -43,8 +40,7 @@ class Account extends AccountRecord
      * @param {List} list
      * @returns {Number}
      */
-    getListPosition(list)
-    {
+    getListPosition(list) {
         return this.getListPositions().keyOf(list.getId())
     }
 
@@ -53,8 +49,7 @@ class Account extends AccountRecord
      *
      * @returns {Seq<Number>}
      */
-    getListPositions()
-    {
+    getListPositions() {
         return this.get('list_positions')
     }
 
@@ -63,8 +58,7 @@ class Account extends AccountRecord
      *
      * @returns {Map<List>}
      */
-    getLists()
-    {
+    getLists() {
         return this.get('lists')
     }
 
@@ -75,10 +69,8 @@ class Account extends AccountRecord
      *
      * @returns {Map<List>}
      */
-    getListsSorted()
-    {
-        return this.getLists().sort((listA, listB) =>
-        {
+    getListsSorted() {
+        return this.getLists().sort((listA, listB) => {
             if (listA.isInbox()) {
                 return -1
             }
@@ -95,8 +87,7 @@ class Account extends AccountRecord
      * @param {Seq<Number>} listPositions
      * @return {Account}
      */
-    setListPositions(listPositions)
-    {
+    setListPositions(listPositions) {
         return this.set('list_positions', listPositions)
     }
 

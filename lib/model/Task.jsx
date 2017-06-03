@@ -13,15 +13,13 @@ const TaskRecord = Record({
  *
  * @author Miguel Rosales Sueiro
  */
-class Task extends TaskRecord
-{
+class Task extends TaskRecord {
     /**
      * Returns the unique ID of the Task.
      *
      * @returns {Number}
      */
-    getId()
-    {
+    getId() {
         return this.get('id')
     }
 
@@ -30,8 +28,7 @@ class Task extends TaskRecord
      *
      * @returns {String}
      */
-    getTitle()
-    {
+    getTitle() {
         return this.get('title')
     }
 }

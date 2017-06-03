@@ -1,20 +1,37 @@
-import Immutable from "immutable";
+import Immutable from 'immutable'
 
 const FolderRecord = Immutable.Record({
     id: null,
     title: '',
-    list_ids: new Immutable.Set(),
-});
+})
 
+/**
+ * A Folder is a group of lists.
+ *
+ * @author Miguel Rosales Sueiro
+ */
 class Folder extends FolderRecord {
 
-    getId() {
-        return this.get('id');
+    /**
+     * Returns the unique ID of the List.
+     *
+     * @returns {Number}
+     */
+    getId()
+    {
+        return this.get('id')
     }
 
-    getTitle() {
-        return this.get('title');
+    /**
+     * Returns the user-defined title for the List.
+     *
+     * @returns {String}
+     */
+    getTitle()
+    {
+        return this.get('title')
     }
+
 }
 
-export default Folder;
+export default Folder
