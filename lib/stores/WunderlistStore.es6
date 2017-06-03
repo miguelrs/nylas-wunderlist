@@ -35,7 +35,7 @@ class WunderlistStore extends NylasStore {
         super()
 
         this.account = new Account()
-        this.token = null
+        this.token = localStorage.getItem('nylas-wunderlist.access_token')
 
         this.authorize(() => {
             this.fetchFolders()
@@ -67,6 +67,7 @@ class WunderlistStore extends NylasStore {
 
                 this.logRequestFinished(uri, response, data)
                 this.token = data.access_token
+                localStorage.setItem('nylas-wunderlist.access_token', this.token)
                 callback()
             })
         }).catch(error => {
