@@ -3,6 +3,7 @@ import { Map, Seq } from 'immutable'
 import { Actions, NylasAPI } from 'nylas-exports'
 import NylasStore from 'nylas-store'
 import request from 'request'
+import Logger from '../logger/Logger'
 import { Account, Folder, List } from '../model'
 
 const config = {
@@ -56,22 +57,22 @@ class WunderlistStore extends NylasStore {
         }
 
         myApiOauth.getAuthorizationCode().then(code => {
-            this.logRequestFinished(config.authorizationUrl, {}, {code: code})
+            Logger.logRequestSucceed(config.authorizationUrl, {}, {code: code})
 
             const uri = 'https://nylas-wunderlist.herokuapp.com/authenticate/' + code
             this.makeRequest(uri, (error, response, data) => {
                 if (error !== null || !data.access_token) {
-                    this.logRequestError(uri, error, response, data)
+                    Logger.logRequestFailed(uri, error, response, data)
                     return
                 }
 
-                this.logRequestFinished(uri, response, data)
+                Logger.logRequestSucceed(uri, response, data)
                 this.token = data.access_token
                 localStorage.setItem('nylas-wunderlist.access_token', this.token)
                 callback()
             })
         }).catch(error => {
-            this.logRequestError(config.authorizationUrl, error)
+            Logger.logRequestFailed(config.authorizationUrl, error)
         })
     }
 
@@ -85,11 +86,11 @@ class WunderlistStore extends NylasStore {
 
         return this.makeRequest(uri, (error, response, data) => {
             if (error !== null || !Array.isArray(data)) {
-                this.logRequestError(uri, error, response, data)
+                Logger.logRequestFailed(uri, error, response, data)
                 return
             }
 
-            this.logRequestFinished(uri, response, data)
+            Logger.logRequestSucceed(uri, response, data)
             this.account = this.account.addFolders(
                 Map(data.map(folderData => [folderData.id, new Folder(folderData)])),
             )
@@ -107,11 +108,11 @@ class WunderlistStore extends NylasStore {
 
         return this.makeRequest(uri, (error, response, data) => {
             if (error !== null || !Array.isArray(data)) {
-                this.logRequestError(uri, error, response, data)
+                Logger.logRequestFailed(uri, error, response, data)
                 return
             }
 
-            this.logRequestFinished(uri, response, data)
+            Logger.logRequestSucceed(uri, response, data)
             this.account = this.account.setListPositions(
                 Seq(data[0].values),
             )
@@ -129,11 +130,11 @@ class WunderlistStore extends NylasStore {
 
         return this.makeRequest(uri, (error, response, data) => {
             if (error !== null || !Array.isArray(data)) {
-                this.logRequestError(uri, error, response, data)
+                Logger.logRequestFailed(uri, error, response, data)
                 return
             }
 
-            this.logRequestFinished(uri, response, data)
+            Logger.logRequestSucceed(uri, response, data)
             this.account = this.account.addLists(
                 Map(data.map(listData => [listData.id, new List(listData)])),
             )
@@ -152,11 +153,11 @@ class WunderlistStore extends NylasStore {
 
         return this.makeRequest(uri, (error, response, data) => {
             if (error !== null) {
-                this.logRequestError(uri, error, response, data)
+                Logger.logRequestFailed(uri, error, response, data)
                 return
             }
 
-            this.logRequestFinished(uri, response, data)
+            Logger.logRequestSucceed(uri, response, data)
             this.trigger()
         }, postData)
     }
@@ -179,7 +180,7 @@ class WunderlistStore extends NylasStore {
      * @returns {request}
      */
     makeRequest(uri, callback, body = null) {
-        this.logRequestStarted(uri, body)
+        Logger.logRequestStarted(uri, body)
         return request({
             uri: uri,
             method: body === null ? 'GET' : 'POST',
@@ -192,54 +193,6 @@ class WunderlistStore extends NylasStore {
             body: body,
         }, callback)
     }
-
-    /**
-     * Logs that an API request has started.
-     *
-     * @param {string} uri
-     * @param {*} body
-     */
-    logRequestStarted(uri, body = null) {
-        console.log(this.getLogHeader())
-        console.log('Request started: ' + uri)
-        console.log(body)
-        console.log(this.getLogFooter())
-    }
-
-    /**
-     * Logs that an API request has finished successfully.
-     *
-     * @param {string} uri
-     * @param {*} response
-     * @param {*} body
-     */
-    logRequestFinished(uri, response = null, body = null) {
-        console.log(this.getLogHeader())
-        console.log('Request finished to: ' + uri)
-        console.log(response)
-        console.log(body)
-        console.log(this.getLogFooter())
-    }
-
-    /**
-     * Logs that an API request has failed.
-     *
-     * @param {string} uri
-     * @param {*} error
-     * @param {*} response
-     * @param {*} body
-     */
-    logRequestError(uri, error = null, response = null, body = null) {
-        console.error(this.getLogHeader())
-        console.error('Request failed to: ' + uri)
-        console.error(error)
-        console.error(response)
-        console.error(body)
-        console.error(this.getLogFooter())
-    }
-
-    getLogHeader = () => '~-~ Wunderlist log (' + (new Date()).toString() + ') -~-~-~-~-~-~-~-~-~-~'
-    getLogFooter = () => '~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~'
 
     getUri = (endpoint) => 'https://a.wunderlist.com/api/v1/' + endpoint
 }
