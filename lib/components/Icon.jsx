@@ -54,7 +54,6 @@ export default React.createClass({
         return (
             <svg viewBox="0 0 24 24"
                  preserveAspectRatio="xMidYMid meet"
-                 fit
                  style={Object.assign({}, styles, this.props.style)}
             >
                 {this.renderGraphic()}

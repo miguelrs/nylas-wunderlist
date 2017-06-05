@@ -1,6 +1,6 @@
 import { FixedPopover, Menu, Spinner } from 'nylas-component-kit'
 import { Actions, React } from 'nylas-exports'
-import Icon from '../components/Icon'
+import {Icon, PopoverContent} from '../components'
 import List from '../model/List'
 import Task from '../model/Task'
 import WunderlistStore from '../stores/WunderlistStore'
@@ -28,15 +28,23 @@ export default class WunderlistPopover extends FixedPopover {
         }
     }
 
-    static onEscape() {
-        Actions.closePopover()
+    componentDidMount() {
+        this.unsubscribe = WunderlistStore.listen(this.onChange)
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe()
+    }
+
+    onChange() {
+        this.setState(WunderlistPopover.getStateFromStores())
     }
 
     static renderMenuItem(item) {
         const iconLeft = item.isInbox() ? 'inbox' : 'list'
 
         return (
-            <div key={item.getId()}>
+            <div>
                 <span style={styles.iconLeft}><Icon icon={iconLeft}/></span>
                 {item.getTitle()}
                 <span style={styles.iconRight}><Icon icon='chevron-right'/></span>
@@ -49,18 +57,6 @@ export default class WunderlistPopover extends FixedPopover {
 
         return account.getListsSorted().toArray()
     };
-
-    componentDidMount() {
-        this.unsubscribe = WunderlistStore.listen(this.onChange)
-    }
-
-    componentWillUnmount() {
-        this.unsubscribe()
-    }
-
-    onChange() {
-        this.setState(WunderlistPopover.getStateFromStores())
-    }
 
     onSelectList(list) {
         const {thread} = this.props
@@ -81,21 +77,21 @@ export default class WunderlistPopover extends FixedPopover {
 
     render() {
         const headerComponents = [
-            <p style={styles.menuHeader}>Select a list:</p>,
+            <p key='header' style={styles.menuHeader}>Select a list:</p>,
         ]
 
         return (
-            <div style={styles.popover}>
+            <PopoverContent>
                 <Menu
                     footerComponents={[]}
                     headerComponents={headerComponents}
-                    itemContent={WunderlistPopover.renderMenuItem.bind(this)}
-                    itemKey={item => item.get('id').toString()}
+                    itemContent={WunderlistPopover.renderMenuItem}
+                    itemKey={item => item.getId().toString()}
                     items={this.buildListPickerMenuItems()}
-                    onEscape={WunderlistPopover.onEscape}
+                    onEscape={() => Actions.closePopover()}
                     onSelect={this.onSelectList.bind(this)}
                 />
-            </div>
+            </PopoverContent>
         )
     }
 }
@@ -109,12 +105,5 @@ const styles = {
     },
     menuHeader: {
         margin: 0,
-    },
-    popover: {
-        background: '#f6f6f6',
-        maxHeight: 400,
-        minHeight: 100,
-        overflow: 'auto',
-        width: 250,
     },
 }

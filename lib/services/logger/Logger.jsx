@@ -5,6 +5,12 @@
  */
 class Logger {
 
+    log(message) {
+        console.log(this._getLogHeader())
+        console.log(message)
+        console.log(this._getLogFooter())
+    }
+
     /**
      * Logs that an API request has started.
      *
