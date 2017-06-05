@@ -1,7 +1,7 @@
 import { FixedPopover, Flexbox } from 'nylas-component-kit'
 import { Actions, React } from 'nylas-exports'
 import WunderlistActions from '../actions'
-import { PopoverContent } from '../components'
+import { Icon, PopoverContent } from '../components'
 
 /**
  * Component to manage the Wunderlist popover.
@@ -23,8 +23,8 @@ export default class WunderlistLoginPopover extends FixedPopover {
         return (
             <PopoverContent>
                 <Flexbox direction="row" style={styles.buttonGroup}>
-                    <p>You are not logged in Wunderlist</p>
-                    <button className="btn" style={styles.buttonPrimary} onClick={this.handleClickLogin}>Login</button>
+                    <p style={styles.message}><span><Icon icon='warning'/></span> Not signed in to Wunderlist</p>
+                    <button className="btn" style={styles.buttonPrimary} onClick={this.handleClickLogin}>Sign in</button>
                     <button className="btn" style={styles.buttonNaked} onClick={this.handleClickCancel}>Cancel</button>
                 </Flexbox>
             </PopoverContent>
@@ -50,4 +50,7 @@ const styles = {
         justifyContent: 'space-around',
         paddingTop: 10,
     },
+    message: {
+        color: grey,
+    }
 }

@@ -41,6 +41,10 @@ export default React.createClass({
                 return (
                     <g><path d="M3 13h2v-2h-2v2zm0 4h2v-2h-2v2zm0-8h2v-2h-2v2zm4 4h14v-2h-14v2zm0 4h14v-2h-14v2zm0-10v2h14v-2h-14z"></path></g>
                 );
+            case 'warning':
+                return (
+                    <g><path d="M1 21h22l-11-19-11 19zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"></path></g>
+                );
         }
     },
     render() {
