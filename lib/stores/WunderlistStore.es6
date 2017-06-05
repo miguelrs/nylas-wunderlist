@@ -1,26 +1,8 @@
-import electronOauth2 from 'electron-oauth2'
 import { Map, Seq } from 'immutable'
 import NylasStore from 'nylas-store'
 import { Account, Folder, List } from '../model'
 import { Logger, Requester } from '../services'
-
-const config = {
-    clientId: '6bea596d4278c3d9896b',
-    authorizationUrl: 'https://www.wunderlist.com/oauth/authorize',
-    redirectUri: 'https://github.com/miguelrs/nylas-wunderlist',
-    useBasicAuthorizationHeader: false //???
-}
-
-// ???
-const windowParams = {
-    alwaysOnTop: true,
-    autoHideMenuBar: true,
-    webPreferences: {
-        nodeIntegration: false,
-    },
-}
-
-const myApiOauth = electronOauth2(config, windowParams)
+import WunderlistAuthStore from './WunderlistAuthStore'
 
 /**
  * Store for the actions related with Wunderlist API.
@@ -34,44 +16,8 @@ class WunderlistStore extends NylasStore {
         super()
 
         this.account = new Account()
-        this.token = localStorage.getItem('nylas-wunderlist.access_token')
 
-        this.authorize(() => {
-            this.fetchFolders()
-            this.fetchListPositions()
-            this.fetchLists()
-        })
-    }
-
-    /**
-     * Ensures there is an access token and runs the callback afterwards.
-     *
-     * @param {function} callback
-     */
-    authorize(callback) {
-        if (this.token !== null) {
-            callback()
-            return
-        }
-
-        myApiOauth.getAuthorizationCode().then(code => {
-            Logger.logRequestSucceed(config.authorizationUrl, {}, {code: code})
-
-            const uri = 'https://nylas-wunderlist.herokuapp.com/authenticate/' + code
-            Requester.makeRequest(uri, (error, response, data) => {
-                if (error !== null || !data.access_token) {
-                    Logger.logRequestFailed(uri, error, response, data)
-                    return
-                }
-
-                Logger.logRequestSucceed(uri, response, data)
-                this.token = data.access_token
-                localStorage.setItem('nylas-wunderlist.access_token', this.token)
-                callback()
-            })
-        }).catch(error => {
-            Logger.logRequestFailed(config.authorizationUrl, error)
-        })
+        this.listenTo(WunderlistAuthStore, this._onAuthorizationChanged)
     }
 
     /**
@@ -167,6 +113,18 @@ class WunderlistStore extends NylasStore {
      */
     getAccount() {
         return this.account
+    }
+
+    /**
+     *
+     * @param {boolean} authorized
+     */
+    _onAuthorizationChanged = (authorized) => {
+        if (authorized) {
+            this.fetchFolders()
+            this.fetchListPositions()
+            this.fetchLists()
+        }
     }
 
     getUri = (endpoint) => 'https://a.wunderlist.com/api/v1/' + endpoint
