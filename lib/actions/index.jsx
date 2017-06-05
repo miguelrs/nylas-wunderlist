@@ -2,6 +2,7 @@ import Reflux from 'reflux'
 
 const Actions = Reflux.createActions([
     'authorize',
+    'createTask',
 ])
 
 // ???

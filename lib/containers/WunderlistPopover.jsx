@@ -1,9 +1,9 @@
 import { FixedPopover, Menu, Spinner } from 'nylas-component-kit'
 import { Actions, React } from 'nylas-exports'
 import {Icon, PopoverContent} from '../components'
-import List from '../model/List'
-import Task from '../model/Task'
+import {List, Task} from '../model'
 import WunderlistStore from '../stores/WunderlistStore'
+import WunderlistActions from '../actions'
 
 /**
  * Component to manage the Wunderlist popover.
@@ -65,7 +65,7 @@ export default class WunderlistPopover extends FixedPopover {
             return
         }
 
-        WunderlistStore.postTask(
+        WunderlistActions.createTask(
             new Task({
                 list_id: list.getId(),
                 title: thread.subject,
