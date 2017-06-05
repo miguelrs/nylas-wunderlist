@@ -76,13 +76,13 @@ class WunderlistAuthStore extends NylasStore {
     }
 
     /**
-     * Triggers every minute so data is refreshed.
+     * Triggers every 10 minutes so data is refreshed.
      */
     _refresh = () => {
         setTimeout(() => {
             this.trigger(this.isAuthorized())
             this._refresh();
-        }, 60000)
+        }, 600000)
     }
 }
 
