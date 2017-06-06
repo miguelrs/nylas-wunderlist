@@ -32,7 +32,9 @@ and unzip the file.
 - [x] Enable sign in.
 - [x] Enable creating tasks.
 - [x] Allow selecting a list.
-- [ ] Add email content as a task note.
+- [ ] Show spinner when loading.
+- [ ] Add tests.
+- [ ] Post email text content as a task note.
 - [ ] Allow starring the task.
 - [ ] Allow adding a due date.
 - [ ] Allow adding a reminder.
