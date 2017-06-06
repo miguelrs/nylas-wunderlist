@@ -14,13 +14,16 @@ and unzip the file.
 
 ## Usage
 
-- Select an email to see the Wunderlist toolbar button and sign in.  
+- Select an email to see the Wunderlist toolbar button and sign in.
+
 ![Sign In button](/assets/docs_usage_sign_in.png)
 
-- Authorize Nylas Wunderlist (this app) to access your Wunderlist account.  
+- Authorize Nylas Wunderlist (this app) to access your Wunderlist account.
+
 ![Authorize app](/assets/docs_usage_authorize.png)
 
-- Select a list and a new task will be created in Wunderlist!  
+- Select a list and a new task will be created in Wunderlist!
+
 ![Authorize app](/assets/docs_usage_create_task.png)
 
 
