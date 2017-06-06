@@ -21,8 +21,7 @@ class Requester {
             uri: uri,
             method: body === null ? 'GET' : 'POST',
             headers: {
-                // 'X-Client-ID': NylasEnv.config.get('nylas-wunderlist.clientId'),
-                'X-Client-ID': '6bea596d4278c3d9896b',
+                'X-Client-ID': NylasEnv.config.get('nylas-wunderlist.oauthConfig.clientId'),
                 'X-Access-Token': localStorage.getItem('nylas-wunderlist.access_token'),
             },
             json: true,

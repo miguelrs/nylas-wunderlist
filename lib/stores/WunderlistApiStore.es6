@@ -8,10 +8,10 @@ import WunderlistAuthStore from './WunderlistAuthStore'
 /**
  * Store for the actions related with Wunderlist API.
  */
-class WunderlistStore extends NylasStore {
+class WunderlistApiStore extends NylasStore {
 
     /**
-     * WunderlistStore constructor.
+     * WunderlistApiStore constructor.
      */
     constructor() {
         super()
@@ -32,12 +32,19 @@ class WunderlistStore extends NylasStore {
     }
 
     /**
+     * Returns the Wunderlist URL for the given endpoint.
+     *
+     * @param {string} endpoint
+     */
+    _buildUrl = (endpoint) => NylasEnv.config.get('nylas-wunderlist.wunderlistApiUrl') + endpoint
+
+    /**
      * Fetches Folders from Wunderlist API.
      *
      * @returns {request}
      */
     _fetchFolders = () => {
-        const uri = this._getUri('folders')
+        const uri = this._buildUrl('folders')
 
         return Requester.makeRequest(uri, (error, response, data) => {
             if (error !== null || !Array.isArray(data)) {
@@ -59,7 +66,7 @@ class WunderlistStore extends NylasStore {
      * @returns {request}
      */
     _fetchListPositions = () => {
-        const uri = this._getUri('list_positions')
+        const uri = this._buildUrl('list_positions')
 
         return Requester.makeRequest(uri, (error, response, data) => {
             if (error !== null || !Array.isArray(data)) {
@@ -81,7 +88,7 @@ class WunderlistStore extends NylasStore {
      * @returns {request}
      */
     _fetchLists = () => {
-        const uri = this._getUri('lists')
+        const uri = this._buildUrl('lists')
 
         return Requester.makeRequest(uri, (error, response, data) => {
             if (error !== null || !Array.isArray(data)) {
@@ -96,13 +103,6 @@ class WunderlistStore extends NylasStore {
             this.trigger()
         })
     }
-
-    /**
-     * Returns the Wunderlist URI for the given endpoint.
-     *
-     * @param {string} endpoint
-     */
-    _getUri = (endpoint) => 'https://a.wunderlist.com/api/v1/' + endpoint
 
     /**
      *
@@ -122,7 +122,7 @@ class WunderlistStore extends NylasStore {
      * @returns {request}
      */
     _postTask = (task) => {
-        const uri = this._getUri('tasks')
+        const uri = this._buildUrl('tasks')
         const postData = task.toJS()
 
         return Requester.makeRequest(uri, (error, response, data) => {
@@ -137,4 +137,4 @@ class WunderlistStore extends NylasStore {
     }
 }
 
-export default new WunderlistStore()
+export default new WunderlistApiStore()

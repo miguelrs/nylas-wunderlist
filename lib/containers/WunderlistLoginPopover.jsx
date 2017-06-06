@@ -51,6 +51,6 @@ const styles = {
         paddingTop: 10,
     },
     message: {
-        color: grey,
+        color: 'grey',
     }
 }

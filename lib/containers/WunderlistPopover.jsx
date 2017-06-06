@@ -2,7 +2,7 @@ import { FixedPopover, Menu, Spinner } from 'nylas-component-kit'
 import { Actions, React } from 'nylas-exports'
 import {Icon, PopoverContent} from '../components'
 import {List, Task} from '../model'
-import WunderlistStore from '../stores/WunderlistStore'
+import WunderlistApiStore from '../stores/WunderlistApiStore'
 import WunderlistActions from '../actions'
 
 /**
@@ -24,12 +24,12 @@ export default class WunderlistPopover extends FixedPopover {
 
     static getStateFromStores() {
         return {
-            account: WunderlistStore.getAccount(),
+            account: WunderlistApiStore.getAccount(),
         }
     }
 
     componentDidMount() {
-        this.unsubscribe = WunderlistStore.listen(this.onChange)
+        this.unsubscribe = WunderlistApiStore.listen(this.onChange)
     }
 
     componentWillUnmount() {
