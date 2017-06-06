@@ -1,27 +1,39 @@
-# N1 Wunderlist
+# Nylas Wunderlist
 
-Extremely simple plugin for Nylas N1 email client to interact with Wunderlist.
+Plugin for [Nylas](https://www.nylas.com/nylas-mail/) mail client to interact with [Wunderlist](https://www.wunderlist.com/) task manager. 
 
 ## Installation
 
-1. Download and run N1.
+1. Download and run Nylas Mail.
 
-2. Download (or clone) this repo.
+2. Download the latest version from the [Releases](https://github.com/miguelrs/nylas-wunderlist/releases) tab
+and unzip the file.
 
-3. From the menu, select `Developer > Install a Package Manually...` and choose the directory where you downloaded this repo.
+3. On the Nylas Mail menu, select `Developer > Install a Plugin...` and choose the unzipped directory.
 
 
 ## Usage
 
-- Open an email and click the 'Add to Wunderlist' button on the toolbar.
+- Select an email to see the Wunderlist toolbar button and sign in.  
+![Sign In button](/assets/docs_usage_sign_in.png)
 
-- Go to your Wunderlist account and you will see the email as a new task in your Inbox!
+- Authorize Nylas Wunderlist (this app) to access your Wunderlist account.  
+![Authorize app](/assets/docs_usage_authorize.png)
+
+- Select a list and a new task will be created in Wunderlist!  
+![Authorize app](/assets/docs_usage_create_task.png)
 
 
-## How it works
+## ToDo
 
-This plugin basically forwards the open email to `me@wunderlist.com`, which will create a new task in your Wunderlist `Inbox` list.
-
-This will only work when the email is being forwarded from an email address that is registered with Wunderlist.
-
-More information about the 'Mail to Wunderlist' functionality can be found [here](https://support.wunderlist.com/customer/portal/articles/59709).
+- [x] Enable sign in.
+- [x] Enable creating tasks.
+- [x] Allow selecting a list.
+- [ ] Add email content as a task note.
+- [ ] Allow starring the task.
+- [ ] Allow adding a due date.
+- [ ] Allow adding a reminder.
+- [ ] Make use of the Nylas storage.
+- [ ] Make use of Nylas Task objects.
+- [ ] Enable offline mode.
+- [ ] Improve authorization.
