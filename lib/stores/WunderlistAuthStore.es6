@@ -35,31 +35,31 @@ class WunderlistAuthStore extends NylasStore {
             return
         }
 
-        const myApiOauth = electronOauth2(
-            NylasEnv.config.get('nylas-wunderlist.oauthConfig'),
-            NylasEnv.config.get('nylas-wunderlist.oauthWindowParams'),
-        )
+        const oauthConfig = NylasEnv.config.get('nylas-wunderlist.oauthConfig')
+        const oauthWindowParams = NylasEnv.config.get('nylas-wunderlist.oauthWindowParams')
 
-        const authUrl = NylasEnv.config.get('nylas-wunderlist.oauthConfig.authorizationUrl')
+        const myApiOauth = electronOauth2(oauthConfig, oauthWindowParams)
+
+        WunderlistActions.startLoading()
         myApiOauth.getAuthorizationCode().then(code => {
-            Logger.logRequestSucceed(authUrl, {}, {code: code})
+            Logger.logRequestSucceed(oauthConfig.authorizationUrl, {}, {code: code})
 
-            const tokenUrl = NylasEnv.config.get('nylas-wunderlist.oauthConfig.tokenUrl') + code
-            Requester.makeRequest(tokenUrl, (error, response, data) => {
-                if (error !== null || !data.access_token) {
-                    Logger.logRequestFailed(tokenUrl, error, response, data)
-                    return
-                }
-
-                Logger.logRequestSucceed(tokenUrl, response, data)
-
-                this.token = data.access_token
-                localStorage.setItem('nylas-wunderlist.access_token', this.token)
-
-                this.trigger(this.isAuthorized())
-            })
+            const tokenUrl = oauthConfig.tokenUrl + code
+            Requester.get(
+                tokenUrl,
+                (data) => {
+                    this.token = data.access_token
+                    localStorage.setItem('nylas-wunderlist.access_token', this.token)
+                    this.trigger(this.isAuthorized())
+                    WunderlistActions.finishLoading()
+                },
+                (data) => {
+                    return data.hasOwnProperty('access_token')
+                },
+            )
         }).catch(error => {
-            Logger.logRequestFailed(authUrl, error)
+            Logger.logRequestFailed(oauthConfig.authorizationUrl, error)
+            WunderlistActions.finishLoading()
         })
     }
 

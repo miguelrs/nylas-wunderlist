@@ -44,20 +44,18 @@ class WunderlistApiStore extends NylasStore {
      * @returns {request}
      */
     _fetchFolders = () => {
-        const uri = this._buildUrl('folders')
-
-        return Requester.makeRequest(uri, (error, response, data) => {
-            if (error !== null || !Array.isArray(data)) {
-                Logger.logRequestFailed(uri, error, response, data)
-                return
-            }
-
-            Logger.logRequestSucceed(uri, response, data)
-            this.account = this.account.addFolders(
-                Map(data.map(folderData => [folderData.id, new Folder(folderData)])),
-            )
-            this.trigger()
-        })
+        Requester.get(
+            this._buildUrl('folders'),
+            (data) => {
+                this.account = this.account.addFolders(
+                    Map(data.map(folderData => [folderData.id, new Folder(folderData)])),
+                )
+                this.trigger()
+            },
+            (data) => {
+                return Array.isArray(data)
+            },
+        )
     }
 
     /**
@@ -66,20 +64,18 @@ class WunderlistApiStore extends NylasStore {
      * @returns {request}
      */
     _fetchListPositions = () => {
-        const uri = this._buildUrl('list_positions')
-
-        return Requester.makeRequest(uri, (error, response, data) => {
-            if (error !== null || !Array.isArray(data)) {
-                Logger.logRequestFailed(uri, error, response, data)
-                return
-            }
-
-            Logger.logRequestSucceed(uri, response, data)
-            this.account = this.account.setListPositions(
-                Seq(data[0].values),
-            )
-            this.trigger()
-        })
+        Requester.get(
+            this._buildUrl('list_positions'),
+            (data) => {
+                this.account = this.account.setListPositions(
+                    Seq(data[0].values),
+                )
+                this.trigger()
+            },
+            (data) => {
+                return Array.isArray(data)
+            },
+        )
     }
 
     /**
@@ -88,20 +84,18 @@ class WunderlistApiStore extends NylasStore {
      * @returns {request}
      */
     _fetchLists = () => {
-        const uri = this._buildUrl('lists')
-
-        return Requester.makeRequest(uri, (error, response, data) => {
-            if (error !== null || !Array.isArray(data)) {
-                Logger.logRequestFailed(uri, error, response, data)
-                return
-            }
-
-            Logger.logRequestSucceed(uri, response, data)
-            this.account = this.account.addLists(
-                Map(data.map(listData => [listData.id, new List(listData)])),
-            )
-            this.trigger()
-        })
+        Requester.get(
+            this._buildUrl('lists'),
+            (data) => {
+                this.account = this.account.addLists(
+                    Map(data.map(listData => [listData.id, new List(listData)])),
+                )
+                this.trigger()
+            },
+            (data) => {
+                return Array.isArray(data)
+            },
+        )
     }
 
     /**
@@ -122,18 +116,13 @@ class WunderlistApiStore extends NylasStore {
      * @returns {request}
      */
     _postTask = (task) => {
-        const uri = this._buildUrl('tasks')
-        const postData = task.toJS()
-
-        return Requester.makeRequest(uri, (error, response, data) => {
-            if (error !== null) {
-                Logger.logRequestFailed(uri, error, response, data)
-                return
+        Requester.post(
+            this._buildUrl('tasks'),
+            task.toJS(),
+            (data) => {
+                this.trigger()
             }
-
-            Logger.logRequestSucceed(uri, response, data)
-            this.trigger()
-        }, postData)
+        )
     }
 }
 

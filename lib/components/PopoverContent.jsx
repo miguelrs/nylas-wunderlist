@@ -1,4 +1,5 @@
-import {React} from 'nylas-exports';
+import { Spinner } from 'nylas-component-kit'
+import { React } from 'nylas-exports'
 
 const styles = {
     popover: {
@@ -8,18 +9,26 @@ const styles = {
         overflow: 'auto',
         width: 250,
     },
-};
+}
 
 export default class PopoverContent extends React.Component {
 
-    static displayName = 'PopoverContent';
+    static displayName = 'PopoverContent'
 
     render() {
-        const {children} = this.props;
+        const {children, loading} = this.props
+
+        let content
+        if (loading) {
+            content = <Spinner visible={true}/>
+        } else {
+            content = children
+        }
+
         return (
             <div style={styles.popover}>
-                {children}
+                {content}
             </div>
-        );
+        )
     }
 }
