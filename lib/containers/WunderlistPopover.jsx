@@ -1,4 +1,4 @@
-import { FixedPopover, Menu, Spinner } from 'nylas-component-kit'
+import { FixedPopover, Menu } from 'nylas-component-kit'
 import { Actions, React } from 'nylas-exports'
 import {Icon, PopoverContent} from '../components'
 import {List, Task} from '../model'
@@ -19,25 +19,25 @@ export default class WunderlistPopover extends FixedPopover {
 
     constructor(props) {
         super(props)
-        this.state = WunderlistPopover.getStateFromStores()
-    }
-
-    static getStateFromStores() {
-        return {
-            account: WunderlistApiStore.getAccount(),
-        }
+        this.state = this._getStateFromStores()
     }
 
     componentDidMount() {
-        this.unsubscribe = WunderlistApiStore.listen(this.onChange)
+        this.unsubscribe = WunderlistApiStore.listen(this._onChange)
     }
 
     componentWillUnmount() {
         this.unsubscribe()
     }
 
-    onChange() {
-        this.setState(WunderlistPopover.getStateFromStores())
+    _onChange = () => {
+        this.setState(this._getStateFromStores())
+    }
+
+    _getStateFromStores = () => {
+        return {
+            account: WunderlistApiStore.getAccount(),
+        }
     }
 
     static renderMenuItem(item) {

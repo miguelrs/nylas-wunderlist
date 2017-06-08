@@ -1,4 +1,5 @@
 import request from 'request'
+import WunderlistActions from '../../actions'
 import { Logger } from '../index'
 
 /**
@@ -7,16 +8,41 @@ import { Logger } from '../index'
  * @author Miguel Rosales Sueiro
  */
 class Requester {
+
     /**
-     * Makes a request to Wunderlist API with the given parameters.
      *
-     * @param {string} uri
-     * @param {function} callback
-     * @param {*} body
-     * @returns {request}
+     * @param url
+     * @param processor
+     * @param validator
      */
-    makeRequest(uri, callback, body = null) {
+    get(url, processor, validator = null) {
+        return this._request(url, null, processor, validator)
+    }
+
+    /**
+     *
+     * @param url
+     * @param body
+     * @param processor
+     * @param validator
+     */
+    post(url, body, processor, validator = null) {
+        return this._request(url, body, processor, validator)
+    }
+
+    /**
+     *
+     * @param uri
+     * @param body
+     * @param processor
+     * @param validator
+     * @returns {*}
+     * @private
+     */
+    _request = (uri, body, processor, validator = null) => {
+        WunderlistActions.startLoading()
         Logger.logRequestStarted(uri, body)
+
         return request({
             uri: uri,
             method: body === null ? 'GET' : 'POST',
@@ -26,7 +52,17 @@ class Requester {
             },
             json: true,
             body: body,
-        }, callback)
+        }, (error, response, data) => {
+            if (error !== null || (validator !== null && !validator(data))) {
+                Logger.logRequestFailed(uri, error, response, data)
+                WunderlistActions.finishLoading()
+                return
+            }
+
+            Logger.logRequestSucceed(uri, response, data)
+            processor(data)
+            WunderlistActions.finishLoading()
+        })
     }
 }
 
