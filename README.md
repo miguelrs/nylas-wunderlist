@@ -32,7 +32,7 @@ and unzip the file.
 - [x] Enable sign in.
 - [x] Enable creating tasks.
 - [x] Allow selecting a list.
-- [ ] Show spinner when loading.
+- [x] Show spinner when loading.
 - [ ] Add tests.
 - [ ] Show confirmation (toast?) when task created.
 - [ ] Post email text content as a task note.
