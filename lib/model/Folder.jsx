@@ -1,8 +1,9 @@
-import Immutable from 'immutable'
+import { Record, Set } from 'immutable'
 
-const FolderRecord = Immutable.Record({
+const FolderRecord = Record({
     id: null,
-    title: '',
+    list_ids: new Set(),
+    title: 'Folder',
 })
 
 /**
@@ -15,23 +16,39 @@ class Folder extends FolderRecord {
     /**
      * Returns the unique ID of the List.
      *
-     * @returns {Number}
+     * @returns {number}
      */
-    getId()
-    {
+    getId() {
         return this.get('id')
+    }
+
+    /**
+     * Returns the
+     *
+     * @returns {Set.<number>}
+     */
+    getListIds() {
+        return this.get('list_ids')
     }
 
     /**
      * Returns the user-defined title for the List.
      *
-     * @returns {String}
+     * @returns {string}
      */
-    getTitle()
-    {
+    getTitle() {
         return this.get('title')
     }
 
+    /**
+     * Returns whether this Folder contains the list with the given ID.
+     *
+     * @param {number} listId
+     * @returns {boolean}
+     */
+    includesList(listId) {
+        return this.getListIds().includes(listId)
+    }
 }
 
 export default Folder

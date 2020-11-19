@@ -1,9 +1,10 @@
+import { List as ArrayList, OrderedSet, Seq } from 'immutable'
 import { FixedPopover, Menu } from 'nylas-component-kit'
 import { Actions, React } from 'nylas-exports'
-import {Icon, PopoverContent} from '../components'
-import {List, Task} from '../model'
-import WunderlistApiStore from '../stores/WunderlistApiStore'
 import WunderlistActions from '../actions'
+import { Icon, PopoverContent } from '../components'
+import { Folder, List, Task } from '../model'
+import WunderlistApiStore from '../stores/WunderlistApiStore'
 
 /**
  * Component to manage the Wunderlist popover.
@@ -40,7 +41,16 @@ export default class WunderlistPopover extends FixedPopover {
         }
     }
 
-    static renderMenuItem(item) {
+    _renderMenuItem = (item) => {
+        if (item === null) {
+            const key = Math.floor(Math.random() * 1000)
+            return <Menu.Item key={key} divider={true}/>
+        }
+
+        if (item instanceof Folder) {
+            return <Menu.Item key={item.getId()} divider={item.getTitle()}/>
+        }
+
         const iconLeft = item.isInbox() ? 'inbox' : 'list'
 
         return (
@@ -52,13 +62,30 @@ export default class WunderlistPopover extends FixedPopover {
         )
     }
 
-    buildListPickerMenuItems() {
+    _buildListPickerMenuItems = () => {
         const {account} = this.state
 
-        return account.getListsSorted().toArray()
+        // Build the list of items for the menu.
+        let items = new ArrayList()
+
+        let currentFolder = null
+        account.getListsSorted().forEach((list) => {
+            // Add each folder once to the items.
+            let nextFolder = account.getFolderForList(list.getId())
+            if (nextFolder !== currentFolder) {
+                // Add the folder even if it's NULL, which means
+                // the current folder ended and next list has no folder.
+                items = items.push(nextFolder)
+                currentFolder = nextFolder
+            }
+            // Add all the lists to the items.
+            items = items.push(list)
+        })
+
+        return items.toArray()
     };
 
-    onSelectList(list) {
+    _onSelectList = (list) => {
         const {thread} = this.props
 
         if (!list instanceof List) {
@@ -85,11 +112,11 @@ export default class WunderlistPopover extends FixedPopover {
                 <Menu
                     footerComponents={[]}
                     headerComponents={headerComponents}
-                    itemContent={WunderlistPopover.renderMenuItem}
+                    itemContent={this._renderMenuItem}
                     itemKey={item => item.getId().toString()}
-                    items={this.buildListPickerMenuItems()}
+                    items={this._buildListPickerMenuItems()}
                     onEscape={() => Actions.closePopover()}
-                    onSelect={this.onSelectList.bind(this)}
+                    onSelect={this._onSelectList}
                 />
             </PopoverContent>
         )

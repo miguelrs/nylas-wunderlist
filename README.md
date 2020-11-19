@@ -33,9 +33,10 @@ and unzip the file.
 - [x] Enable creating tasks.
 - [x] Allow selecting a list.
 - [x] Show spinner when loading.
+- [x] Show folders.
+- [ ] Post email text content as a task note.
 - [ ] Add tests.
 - [ ] Show confirmation (toast?) when task created.
-- [ ] Post email text content as a task note.
 - [ ] Allow starring the task.
 - [ ] Allow adding a due date.
 - [ ] Allow adding a reminder.

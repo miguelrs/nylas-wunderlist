@@ -1,9 +1,9 @@
-import { Map, Record, Seq } from 'immutable'
+import { Record, Seq, Set } from 'immutable'
 
 const AccountRecord = Record({
-    folders: new Map(),
+    folders: new Set(),
     list_positions: new Seq(),
-    lists: new Map(),
+    lists: new Set(),
 })
 
 /**
@@ -17,7 +17,7 @@ class Account extends AccountRecord {
     /**
      * Merges the given Folders with the existing Folders in the Account.
      *
-     * @param {Map<string, Folder>} newFolders
+     * @param {Set.<Folder>} newFolders
      * @returns {Account}
      */
     addFolders(newFolders) {
@@ -27,7 +27,7 @@ class Account extends AccountRecord {
     /**
      * Merges the given Lists with the existing Lists in the Account.
      *
-     * @param {Map<string, List>} newLists
+     * @param {Set.<List>} newLists
      * @returns {Account}
      */
     addLists(newLists) {
@@ -35,19 +35,34 @@ class Account extends AccountRecord {
     }
 
     /**
+     * @returns {?Folder}
+     */
+    getFolderForList(listId) {
+        return this.getFolders().find(folder => folder.includesList(listId)) || null
+    }
+
+    /**
+     * @returns {Set.<Folder>}
+     */
+    getFolders() {
+        return this.get('folders')
+    }
+
+    /**
      * Returns the position for the given List.
      *
      * @param {List} list
-     * @returns {Number}
+     * @returns {number}
      */
     getListPosition(list) {
-        return this.getListPositions().keyOf(list.getId())
+        const position = this.getListPositions().keyOf(list.getId())
+        return Number.isInteger(position) ? position : 9999
     }
 
     /**
      * Returns the sequence of list positions.
      *
-     * @returns {Seq<Number>}
+     * @returns {Seq.<number>}
      */
     getListPositions() {
         return this.get('list_positions')
@@ -56,7 +71,7 @@ class Account extends AccountRecord {
     /**
      * Returns all the Lists in this Account.
      *
-     * @returns {Map<List>}
+     * @returns {Set.<List>}
      */
     getLists() {
         return this.get('lists')
@@ -67,7 +82,7 @@ class Account extends AccountRecord {
      *
      * It always ensure the Inbox list is in first position.
      *
-     * @returns {Map<List>}
+     * @returns {Set.<List>}
      */
     getListsSorted() {
         return this.getLists().sort((listA, listB) => {
@@ -84,7 +99,7 @@ class Account extends AccountRecord {
     /**
      * Overrides the sequence of list positions.
      *
-     * @param {Seq<Number>} listPositions
+     * @param {Seq.<number>} listPositions
      * @return {Account}
      */
     setListPositions(listPositions) {

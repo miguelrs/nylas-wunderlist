@@ -3,7 +3,7 @@ import Immutable from 'immutable'
 const ListRecord = Immutable.Record({
     id: null,
     list_type: 'list',
-    title: 'List',
+    title: '',
 })
 
 /**
@@ -18,7 +18,7 @@ class List extends ListRecord
     /**
      * Returns the unique ID of the List.
      *
-     * @returns {Number}
+     * @returns {number}
      */
     getId() {
         return this.get('id')
@@ -27,7 +27,7 @@ class List extends ListRecord
     /**
      * Returns the user-defined title for the List.
      *
-     * @returns {String}
+     * @returns {string}
      */
     getTitle() {
         return this.get('title')

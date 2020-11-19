@@ -1,8 +1,8 @@
-import { Map, Seq } from 'immutable'
+import { Seq, Set } from 'immutable'
 import NylasStore from 'nylas-store'
 import WunderlistActions from '../actions'
 import { Account, Folder, List } from '../model'
-import { Logger, Requester } from '../services'
+import { Requester } from '../services'
 import WunderlistAuthStore from './WunderlistAuthStore'
 
 /**
@@ -46,15 +46,12 @@ class WunderlistApiStore extends NylasStore {
     _fetchFolders = () => {
         Requester.get(
             this._buildUrl('folders'),
-            (data) => {
-                this.account = this.account.addFolders(
-                    Map(data.map(folderData => [folderData.id, new Folder(folderData)])),
-                )
+            data => {
+                const foldersArray = data.map(folderData => new Folder(folderData))
+                this.account = this.account.addFolders(new Set(foldersArray))
                 this.trigger()
             },
-            (data) => {
-                return Array.isArray(data)
-            },
+            data => Array.isArray(data),
         )
     }
 
@@ -66,15 +63,11 @@ class WunderlistApiStore extends NylasStore {
     _fetchListPositions = () => {
         Requester.get(
             this._buildUrl('list_positions'),
-            (data) => {
-                this.account = this.account.setListPositions(
-                    Seq(data[0].values),
-                )
+            data => {
+                this.account = this.account.setListPositions(new Seq(data[0].values))
                 this.trigger()
             },
-            (data) => {
-                return Array.isArray(data)
-            },
+            data => Array.isArray(data),
         )
     }
 
@@ -86,15 +79,13 @@ class WunderlistApiStore extends NylasStore {
     _fetchLists = () => {
         Requester.get(
             this._buildUrl('lists'),
-            (data) => {
+            data => {
                 this.account = this.account.addLists(
-                    Map(data.map(listData => [listData.id, new List(listData)])),
+                    new Set(data.map(listData => new List(listData))),
                 )
                 this.trigger()
             },
-            (data) => {
-                return Array.isArray(data)
-            },
+            data => Array.isArray(data),
         )
     }
 
@@ -119,9 +110,7 @@ class WunderlistApiStore extends NylasStore {
         Requester.post(
             this._buildUrl('tasks'),
             task.toJS(),
-            (data) => {
-                this.trigger()
-            }
+            (data) => this.trigger(),
         )
     }
 }

@@ -17,7 +17,7 @@ class Task extends TaskRecord {
     /**
      * Returns the unique ID of the Task.
      *
-     * @returns {Number}
+     * @returns {number}
      */
     getId() {
         return this.get('id')
@@ -26,7 +26,7 @@ class Task extends TaskRecord {
     /**
      * Returns the user-defined title for the Task.
      *
-     * @returns {String}
+     * @returns {string}
      */
     getTitle() {
         return this.get('title')
